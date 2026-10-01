@@ -1,0 +1,17 @@
+rules_version = '2';
+
+// Todoke Planner — only the one shared account can read or write.
+// UID below is the single user in Firebase console -> Authentication -> Users.
+// Everything not matched below is denied by default.
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function isUs() {
+      return request.auth != null && request.auth.uid == 'HkT5o55kUNbYW3MS9A8blgUH4se2';
+    }
+
+    match /items/{entryId} { allow read, write: if isUs(); }
+    match /goals/{weekKey} { allow read, write: if isUs(); }
+    match /notes/{noteId}  { allow read, write: if isUs(); }
+  }
+}

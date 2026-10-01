@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Todoke Planner 🌸</title>
+<link href="https://fonts.googleapis.com/css2?family=Klee+One:wght@400;600&family=Zen+Maru+Gothic:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);
+--bg:#f6f9fd;--card:#ffffff;--ink:#3b4660;--mute:#8590a8;--line:#e3eaf5;
+--k:#6fa8e0;--kbg:#dcecfb;--kink:#2c5f94;--s:#f09cb8;--sbg:#fde0ea;--sink:#a23c62;--today:#fff6d6}
+:root:not([data-theme="light"]){}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#171c2b;--card:#212839;--ink:#e6eaf5;--mute:#9aa4bd;--line:#2f3850;--kbg:#27415f;--kink:#bcdcff;--sbg:#5a2d40;--sink:#ffd0e0;--today:#3b3820}}
+:root[data-theme="dark"]{--bg:#171c2b;--card:#212839;--ink:#e6eaf5;--mute:#9aa4bd;--line:#2f3850;--kbg:#27415f;--kink:#bcdcff;--sbg:#5a2d40;--sink:#ffd0e0;--today:#3b3820}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}
+body{margin:0;background:radial-gradient(circle at 10% 0,var(--kbg),transparent 40%),radial-gradient(circle at 90% 5%,var(--sbg),transparent 40%),var(--bg);color:var(--ink);font-family:'Zen Maru Gothic',system-ui,sans-serif;min-height:100vh}
+header{text-align:center;padding:28px 16px 8px}
+h1{font-family:'Klee One',serif;font-weight:600;font-size:clamp(26px,5vw,38px);margin:0;letter-spacing:.02em}
+h1 span.k{color:var(--k)}h1 span.s{color:var(--s)}
+.sub{color:var(--mute);font-size:14px;margin-top:4px}
+.bar{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;align-items:center;padding:12px 16px}
+.seg{display:inline-flex;border:1px solid var(--line);border-radius:99px;background:var(--card);overflow:hidden}
+.seg button{border:0;background:none;color:var(--ink);font:inherit;font-size:14px;padding:8px 14px;cursor:pointer}
+.seg button.on.k{background:var(--k);color:#fff}.seg button.on.s{background:var(--s);color:#fff}.seg button.on.a{background:var(--ink);color:var(--bg)}
+.lbl{font-size:13px;color:var(--mute)}
+.legend{display:flex;flex-wrap:wrap;gap:6px 14px;justify-content:center;font-size:13px;color:var(--mute);padding:0 16px 8px}
+.legend i{font-style:normal}
+.note{margin:6px auto;max-width:640px;text-align:center;font-size:13px;color:var(--sink);background:var(--sbg);border-radius:12px;padding:8px 12px}
+.wrap{overflow-x:auto;margin:8px 12px 40px;border:1px solid var(--line);border-radius:18px;background:var(--card);max-width:100%}
+table{border-collapse:collapse;width:100%;min-width:900px;table-layout:fixed}
+th{font-family:'Klee One',serif;font-size:14px;padding:10px 6px;background:var(--bg);border-bottom:1px solid var(--line);position:sticky;top:0}
+th:first-child,td.wk{width:74px}
+td{border-bottom:1px solid var(--line);border-left:1px solid var(--line);vertical-align:top;padding:5px;height:62px;position:relative}
+td.wk{border-left:0;text-align:center;font-family:'Klee One',serif;background:var(--bg)}
+td.wk b{font-size:18px;display:block}td.wk small{color:var(--mute);font-size:11px;font-family:'Zen Maru Gothic'}
+tr.now td{background:var(--today)}tr.now td.wk{background:var(--today)}
+tr.brk td{background:repeating-linear-gradient(45deg,transparent 0 8px,var(--line) 8px 9px)}
+.add{position:absolute;right:3px;bottom:2px;border:0;background:none;color:var(--mute);font-size:16px;cursor:pointer;opacity:.35;line-height:1}
+td:hover .add{opacity:1}
+.chip{display:block;width:100%;text-align:left;border:0;border-radius:9px;padding:3px 7px;margin-bottom:3px;font:inherit;font-size:12px;line-height:1.3;cursor:pointer;word-break:break-word}
+.chip.k{background:var(--kbg);color:var(--kink);border-left:4px solid var(--k)}
+.chip.s{background:var(--sbg);color:var(--sink);border-left:4px solid var(--s)}
+.chip.done{opacity:.5;text-decoration:line-through}
+dialog{border:0;border-radius:20px;padding:20px;width:min(380px,92vw);background:var(--card);color:var(--ink);box-shadow:0 20px 60px #0004}
+dialog::backdrop{background:#0006}
+dialog h3{margin:0 0 12px;font-family:'Klee One',serif}
+label{display:block;font-size:13px;color:var(--mute);margin:10px 0 4px}
+input[type=text],select{width:100%;padding:9px 11px;border:1px solid var(--line);border-radius:10px;background:var(--bg);color:var(--ink);font:inherit}
+.row{display:flex;gap:8px;margin-top:16px;justify-content:flex-end;flex-wrap:wrap}
+.btn{border:0;border-radius:99px;padding:9px 18px;font:inherit;cursor:pointer;background:var(--line);color:var(--ink)}
+.btn.p{color:#fff;background:var(--k)}.btn.p.s{background:var(--s)}.btn.d{color:var(--sink);background:var(--sbg)}
+footer{text-align:center;color:var(--mute);font-size:13px;padding:0 16px 30px;font-family:'Klee One',serif}
+
+.goal{position:relative;margin:10px auto 6px;width:min(680px,calc(100% - 28px));background:var(--card);border-radius:22px;padding:16px 18px;border:2px solid transparent;background:linear-gradient(var(--card),var(--card)) padding-box,linear-gradient(120deg,var(--k),var(--s)) border-box;box-shadow:0 8px 28px #6fa8e022}
+.gh{display:flex;align-items:center;justify-content:space-between;gap:8px;text-align:center}
+.gh small{color:var(--mute);font-size:12px;display:block}
+.gh h2{margin:0;font-family:'Klee One',serif;font-size:18px}
+.gh button{border:0;background:var(--bg);color:var(--ink);width:32px;height:32px;border-radius:50%;font-size:18px;cursor:pointer}
+.gin{display:flex;gap:8px;margin-top:12px;flex-wrap:wrap}
+.gin input[type=text]{flex:1;min-width:180px}
+.gdone{font-size:13px;color:var(--mute);margin:10px 0 0;display:flex;align-items:center;gap:6px}
+.gtext{font-family:'Klee One',serif;font-size:19px;text-align:center;margin-top:10px;min-height:26px}
+.gtext.done{text-decoration:line-through;opacity:.55}
+.board{position:relative;margin:26px 12px 40px}
+.board .wrap{margin:0}
+.stk{position:absolute;z-index:3;pointer-events:none;font-size:30px;line-height:1;padding:7px 9px;background:#fff;border-radius:16px;border:3px solid #fff;box-shadow:0 3px 10px #0003;transform:rotate(var(--r,0deg));font-family:'Klee One',serif;color:#4a5578}
+.stk.t{font-size:13px;font-weight:600;padding:6px 12px;border-radius:99px;white-space:nowrap}
+.stk.b{background:#cfe5fb}.stk.p{background:#fcd5e3;color:#8b3558}
+.hs{position:absolute;pointer-events:none;font-size:34px;transform:rotate(var(--r,0deg));filter:drop-shadow(0 2px 3px #0002)}
+header{position:relative}
+.petal{position:fixed;top:-30px;z-index:0;pointer-events:none;font-size:16px;opacity:.55;animation:fall linear infinite}
+@keyframes fall{to{transform:translateY(110vh) translateX(40px) rotate(360deg)}}
+@media(prefers-reduced-motion:reduce){.petal{display:none}}
+@media(max-width:600px){.hs{display:none}.stk.hide{display:none}}
+header,.bar,.goal,.board,.legend,footer{position:relative;z-index:1}
+
+.two{display:grid;grid-template-columns:1fr 1fr;gap:12px;width:min(680px,calc(100% - 28px));margin:12px auto}
+@media(max-width:600px){.two{grid-template-columns:1fr}}
+.card{background:var(--card);border-radius:20px;padding:14px 16px;border:1px solid var(--line);box-shadow:0 6px 20px #6fa8e01a}
+.card h3{margin:0 0 8px;font-family:'Klee One',serif;font-size:16px}
+.up{display:flex;justify-content:space-between;gap:8px;font-size:13px;padding:6px 8px;border-radius:10px;margin-bottom:5px}
+.up.k{background:var(--kbg);color:var(--kink)}.up.s{background:var(--sbg);color:var(--sink)}
+.up b{white-space:nowrap}.empty{color:var(--mute);font-size:13px}
+.note2{font-size:13px;padding:7px 10px;border-radius:14px;margin-bottom:6px;position:relative}
+.note2.k{background:var(--kbg);color:var(--kink)}.note2.s{background:var(--sbg);color:var(--sink)}
+.note2 small{display:block;opacity:.7;font-size:11px}
+.note2 button{position:absolute;right:6px;top:4px;border:0;background:none;color:inherit;opacity:.5;cursor:pointer}
+.nin{display:flex;gap:6px;margin-top:8px}.nin input{flex:1;min-width:0}
+.gstat{text-align:center;font-size:13px;color:var(--mute);margin-top:8px}
+tr.past td{opacity:.55}
+td.tod{box-shadow:inset 0 0 0 2px var(--s)}
+.pill{border:1px solid var(--line);background:var(--card);color:var(--ink);border-radius:99px;font:inherit;font-size:14px;padding:8px 14px;cursor:pointer}
+.chip{transition:transform .15s}.chip:hover{transform:translateY(-1px) scale(1.02)}
+/* ---- private passcode gate ---- */
+body.locked > *:not(#gate){display:none}
+#gate{position:fixed;inset:0;z-index:60;display:none;align-items:center;justify-content:center;padding:24px;background:radial-gradient(circle at 25% 15%,var(--kbg),transparent 55%),radial-gradient(circle at 78% 85%,var(--sbg),transparent 55%),var(--bg)}
+body.locked #gate{display:flex}
+.gatecard{width:min(360px,100%);box-sizing:border-box;text-align:center;border-radius:22px;padding:22px 20px;border:2px solid transparent;background:linear-gradient(var(--card),var(--card)) padding-box,linear-gradient(120deg,var(--k),var(--s)) border-box;box-shadow:0 16px 48px #6fa8e033}
+.gatecard h2{margin:0 0 6px;font-family:'Klee One',serif;font-size:20px}
+.gatecard p{margin:0 0 14px;font-size:13px;color:var(--mute);line-height:1.5}
+.gatecard input{width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:12px;background:var(--bg);color:var(--ink);font:inherit;text-align:center}
+.gatecard button{width:100%;margin-top:12px}
+.gateerr{min-height:18px;font-size:12px;color:var(--sink);margin-top:10px}
+</style>
+</head>
+<body class="locked">
+<div id="gate">
+<div class="gatecard">
+<h2>🌸 Todoke Planner</h2>
+<p>This planner is private.<br>Enter the shared passcode to unlock it.</p>
+<input type="password" id="pass" placeholder="Shared passcode" autocomplete="current-password" aria-label="Shared passcode">
+<button class="btn p" id="passgo">Unlock 🔓</button>
+<div class="gateerr" id="gateerr"></div>
+</div>
+</div>
+<header>
+<h1><span class="k">Kazehaya</span> 🌸 <span class="s">Sawako</span></h1>
+<div class="sub">Our school planner · school year 2026/27</div>
+<span class="hs" style="left:6%;top:18px;--r:-12deg">🌸</span><span class="hs" style="right:7%;top:14px;--r:10deg">💌</span>
+<span class="hs" style="left:16%;top:62px;--r:8deg;font-size:24px">✨</span><span class="hs" style="right:17%;top:58px;--r:-8deg;font-size:24px">🕊️</span>
+</header>
+<section class="goal"><div class="gh"><button id="gp" aria-label="Previous week">‹</button><div><small id="gw"></small><h2>🎯 This week's goal for the both of us</h2></div><button id="gn" aria-label="Next week">›</button></div>
+<div class="gtext" id="gtext"></div>
+<div class="gin"><input type="text" id="gin" maxlength="120" placeholder="Write our goal for this week…"><button class="btn p" id="gsave">Save</button></div>
+<label class="gdone"><input type="checkbox" id="gdone"> We did it! 🎉</label><div class="gstat" id="gstat"></div></section>
+<section class="two"><div class="card"><h3>⏳ Coming up</h3><div id="up"></div></div>
+<div class="card"><h3>💌 Notes to each other</h3><div id="notes"></div><div class="nin"><input type="text" id="nt" maxlength="140" placeholder="Write something sweet…"><button class="btn p" id="ns">Send</button></div></div></section>
+<div class="bar">
+ <span class="lbl">I am</span>
+ <div class="seg" id="me"><button data-v="k" class="k">💙 Kazehaya</button><button data-v="s" class="s">🌸 Sawako</button></div>
+ <span class="lbl">Show</span>
+ <div class="seg" id="flt"><button data-v="a" class="a">Both</button><button data-v="k" class="k">Kazehaya</button><button data-v="s" class="s">Sawako</button></div>
+<button class="pill" id="jump">📍 This week</button><button class="pill" id="theme" aria-label="Toggle theme">🌙</button><button class="pill" id="out" aria-label="Lock this planner" title="Lock this planner">🚪</button>
+</div>
+<div class="legend" id="legend"></div>
+<div id="note"></div>
+<div class="board">
+<span class="stk t b" style="left:14px;top:-20px;--r:-5deg">From me to you 💌</span>
+<span class="stk t p" style="right:14px;top:-20px;--r:4deg">H x Y 🌸</span>
+<span class="stk" style="left:-10px;top:30%;--r:-10deg">☁️</span>
+<span class="stk hide" style="right:-8px;top:42%;--r:9deg">🍙</span>
+<span class="stk hide b" style="left:-10px;bottom:22%;--r:7deg">🌷</span>
+<span class="stk t p hide" style="right:10px;bottom:-16px;--r:-4deg">Thank you for reaching me ✿</span>
+<span class="stk t b hide" style="left:10px;bottom:-16px;--r:3deg">We got this! 💙</span>
+<div class="wrap"><table><thead><tr><th>Week</th><th>Mon</th><th>Tue</th><th>Wed</th><th>Thu</th><th>Fri</th><th>Other</th></tr></thead><tbody id="body"></tbody></table></div></div>
+<footer>"I want to reach you." — click a cell's ＋ to add something, click an entry to edit or tick it off.</footer>
+
+<div id="petals"></div>
+<dialog id="dlg"><h3 id="dt">Add entry</h3>
+<label>What</label><input type="text" id="txt" maxlength="80" placeholder="e.g. Math test ch. 2">
+<label>Type</label><select id="typ"></select>
+<label>Whose</label><select id="who"><option value="k">💙 Kazehaya</option><option value="s">🌸 Sawako</option></select>
+<label id="dl"><input type="checkbox" id="dn"> Done ✓</label>
+<div class="row"><button class="btn d" id="del">Delete</button><button class="btn" id="cx">Cancel</button><button class="btn p" id="ok">Save</button></div>
+</dialog>
+
+<script type="module">
+import {initializeApp} from 'https://www.gstatic.com/firebasejs/12.19.0/firebase-app.js';
+import {getAuth,signInWithEmailAndPassword,onAuthStateChanged,signOut} from 'https://www.gstatic.com/firebasejs/12.19.0/firebase-auth.js';
+import {getFirestore,collection,doc,setDoc,deleteDoc,onSnapshot} from 'https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js';
+
+const TYPES={n:['ℹ️','Good to know'],h:['📚','Homework'],t:['📝','Test'],x:['🎯','National / course exam'],i:['📥','Submission'],p:['🎤','Presentation']};
+const WEEKS=[];for(let w=33;w<=52;w++)WEEKS.push([w,2026]);for(let w=1;w<=23;w++)WEEKS.push([w,2027]);
+const BREAKS=new Set(['2026-33','2026-34','2026-44','2026-52','2027-1','2027-7','2027-13','2027-18','2027-19']);
+const DAYS=7;
+function mondayOf(w,y){const j=new Date(Date.UTC(y,0,4));const d=(j.getUTCDay()+6)%7;const m=new Date(j);m.setUTCDate(j.getUTCDate()-d+(w-1)*7);return m}
+const fmt=d=>d.getUTCDate()+'/'+(d.getUTCMonth()+1);
+let items=[],me='k',flt='a',col=null,editing=null,target=null;
+try{me=localStorage.getItem('todoke-me')||'k';flt=localStorage.getItem('todoke-flt')||'a'}catch(e){}
+const $=id=>document.getElementById(id);
+$('legend').innerHTML=Object.values(TYPES).map(t=>`<span><i>${t[0]}</i> ${t[1]}</span>`).join('');
+$('typ').innerHTML=Object.entries(TYPES).map(([k,v])=>`<option value="${k}">${v[0]} ${v[1]}</option>`).join('');
+
+function seg(id,val,cb){const el=$(id);el.querySelectorAll('button').forEach(b=>{b.classList.toggle('on',b.dataset.v===val);b.onclick=()=>{cb(b.dataset.v);seg(id,b.dataset.v,cb)}})}
+seg('me',me,v=>{me=v;try{localStorage.setItem('todoke-me',v)}catch(e){}});
+seg('flt',flt,v=>{flt=v;try{localStorage.setItem('todoke-flt',v)}catch(e){}render()});
+
+function nowKey(){const t=new Date();const d=new Date(Date.UTC(t.getFullYear(),t.getMonth(),t.getDate()));const n=(d.getUTCDay()+6)%7;d.setUTCDate(d.getUTCDate()-n+3);const y=d.getUTCFullYear();const f=new Date(Date.UTC(y,0,4));const w=1+Math.round(((d-f)/864e5-3+((f.getUTCDay()+6)%7))/7);return y+'-'+w}
+var render=function(){
+ const nk=nowKey(),tb=$('body');tb.innerHTML='';
+ for(const [w,y] of WEEKS){
+  const k=y+'-'+w,m=mondayOf(w,y),f=new Date(m);f.setUTCDate(f.getUTCDate()+4);
+  const tr=document.createElement('tr');if(k===nk)tr.className='now';if(BREAKS.has(k))tr.classList.add('brk');
+  tr.innerHTML=`<td class="wk"><b>${w}</b><small>${fmt(m)}–${fmt(f)}</small></td>`;
+  for(let d=0;d<DAYS-1;d++){
+   const td=document.createElement('td');
+   items.filter(i=>i.week===w&&i.year===y&&i.day===d&&(flt==='a'||i.who===flt)).forEach(i=>{
+    const b=document.createElement('button');b.className='chip '+i.who+(i.done?' done':'');
+    b.textContent=TYPES[i.type][0]+' '+i.text;b.onclick=()=>openDlg(i);td.appendChild(b)});
+   const a=document.createElement('button');a.className='add';a.textContent='＋';a.setAttribute('aria-label','Add');a.onclick=()=>openDlg(null,{w,y,d});td.appendChild(a);
+   tr.appendChild(td)}
+  tb.appendChild(tr)}
+}
+function openDlg(item,t){
+ editing=item;target=t;const ed=!!item;
+ $('dt').textContent=ed?'Edit entry':'Add entry';
+ $('txt').value=ed?item.text:'';$('typ').value=ed?item.type:'h';$('who').value=ed?item.who:me;
+ $('dn').checked=ed?!!item.done:false;$('dl').style.display=ed?'block':'none';$('del').style.display=ed?'inline-block':'none';
+ $('ok').className='btn p '+$('who').value;$('dlg').showModal();$('txt').focus()}
+$('who').onchange=()=>$('ok').className='btn p '+$('who').value;
+$('cx').onclick=()=>$('dlg').close();
+$('ok').onclick=async()=>{
+ const text=$('txt').value.trim();if(!text)return;
+ const base=editing?{week:editing.week,year:editing.year,day:editing.day}:{week:target.w,year:target.y,day:target.d};
+ const data={...base,text,type:$('typ').value,who:$('who').value,done:$('dn').checked};
+ $('dlg').close();
+ if(col){try{await(editing?col.doc(editing.id):col.doc()).set(data);return}catch(e){note('Could not save — you may need edit access to this page.')}}
+ else if(editing){Object.assign(editing,data);render()}else{items.push({id:'l'+Date.now(),...data});render()}};
+$('del').onclick=async()=>{$('dlg').close();if(col){try{await col.doc(editing.id).delete()}catch(e){note('Could not delete.')}}else{items=items.filter(i=>i!==editing);render()}};
+function note(t){$('note').innerHTML=t?`<div class="note">${t}</div>`:''}
+
+
+// ---- weekly goal ----
+let gi=Math.max(0,WEEKS.findIndex(([w,y])=>y+'-'+w===nowKey())),goals={},gcol=null;
+const gk=()=>WEEKS[gi][1]+'-'+WEEKS[gi][0];
+var renderGoal=function(){
+ const [w,y]=WEEKS[gi],m=mondayOf(w,y),f=new Date(m);f.setUTCDate(f.getUTCDate()+4);
+ const g=goals[gk()]||{text:'',done:false};
+ $('gw').textContent='Week '+w+' · '+fmt(m)+'–'+fmt(f)+(y+'-'+w===nowKey()?' (this week)':'');
+ $('gtext').textContent=g.text||'No goal yet — set one together 💭';
+ $('gtext').className='gtext'+(g.done&&g.text?' done':'');
+ if(document.activeElement!==$('gin'))$('gin').value=g.text||'';
+ $('gdone').checked=!!g.done;
+}
+async function saveGoal(patch){
+ const k=gk(),cur=goals[k]||{text:'',done:false},d={...cur,...patch};
+ goals[k]=d;renderGoal();
+ if(gcol){try{await gcol.doc(k).set(d)}catch(e){note('Could not save the goal — you may need edit access.')}}
+}
+$('gp').onclick=()=>{gi=Math.max(0,gi-1);renderGoal()};
+$('gn').onclick=()=>{gi=Math.min(WEEKS.length-1,gi+1);renderGoal()};
+$('gsave').onclick=()=>saveGoal({text:$('gin').value.trim()});
+$('gin').onkeydown=e=>{if(e.key==='Enter')$('gsave').click()};
+$('gdone').onchange=()=>saveGoal({done:$('gdone').checked});
+renderGoal();renderNotes&&0;
+// ---- falling petals ----
+(()=>{const c=$('petals'),e=['🌸','🌸','🌷','✿'];for(let i=0;i<9;i++){const p=document.createElement('span');p.className='petal';p.textContent=e[i%e.length];p.style.left=(i*11+Math.random()*8)+'%';p.style.animationDuration=(14+Math.random()*12)+'s';p.style.animationDelay=(-Math.random()*20)+'s';c.appendChild(p)}})();
+
+// ---- upcoming, stats, notes, theme ----
+const todayUTC=(()=>{const t=new Date();return Date.UTC(t.getFullYear(),t.getMonth(),t.getDate())})();
+const idate=i=>mondayOf(i.week,i.year).getTime()+Math.min(i.day,4)*864e5;
+function renderUp(){
+ const L=items.filter(i=>'txip'.includes(i.type)&&!i.done&&idate(i)>=todayUTC).sort((a,b)=>idate(a)-idate(b)).slice(0,5);
+ $('up').innerHTML=L.length?L.map(i=>{const n=Math.round((idate(i)-todayUTC)/864e5);
+  const t=n===0?'today!':n===1?'tomorrow':'in '+n+' days';
+  return `<div class="up ${i.who}"><span>${TYPES[i.type][0]} ${esc(i.text)}</span><b>${t}</b></div>`}).join(''):'<div class="empty">Nothing due. Breathe 🌿</div>';
+}
+const esc=t=>String(t).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+function renderStat(){
+ const [w,y]=WEEKS[gi],h=items.filter(i=>i.week===w&&i.year===y&&i.type==='h');
+ const c=x=>{const a=h.filter(i=>i.who===x);return a.filter(i=>i.done).length+'/'+a.length};
+ $('gstat').textContent='Homework done this week — 💙 '+c('k')+'  ·  🌸 '+c('s');
+}
+let notes=[],ncol=null;
+function renderNotes(){
+ const L=[...notes].sort((a,b)=>b.ts-a.ts).slice(0,4);
+ $('notes').innerHTML=L.length?L.map(n=>`<div class="note2 ${n.who}">${esc(n.text)}<small>${n.who==='k'?'Kazehaya':'Sawako'} · ${new Date(n.ts).toLocaleDateString()}</small>${n.who===me?`<button data-id="${n.id}" aria-label="Delete">×</button>`:''}</div>`).join(''):'<div class="empty">No notes yet — say hi 🌸</div>';
+ $('notes').querySelectorAll('button').forEach(b=>b.onclick=async()=>{const id=b.dataset.id;if(ncol){try{await ncol.doc(id).delete()}catch(e){}}else{notes=notes.filter(n=>n.id!==id);renderNotes()}});
+}
+$('ns').onclick=async()=>{const text=$('nt').value.trim();if(!text)return;$('nt').value='';const d={text,who:me,ts:Date.now()};
+ if(ncol){try{await ncol.doc().set(d)}catch(e){note('Could not send — you may need edit access.')}}else{notes.push({id:'n'+d.ts,...d});renderNotes()}};
+$('nt').onkeydown=e=>{if(e.key==='Enter')$('ns').click()};
+const _rg=renderGoal;renderGoal=function(){_rg();renderStat()};
+const _r=render;render=function(){_r();renderUp();renderStat();
+ const tdy=new Date(todayUTC),dd=(tdy.getUTCDay()+6)%7,rows=$('body').children;
+ WEEKS.forEach(([w,y],r)=>{const m=mondayOf(w,y).getTime();if(m+7*864e5<=todayUTC)rows[r].classList.add('past');
+  if(m<=todayUTC&&todayUTC<m+7*864e5&&dd<5)rows[r].children[dd+1].classList.add('tod')})};
+function jump(){const r=document.querySelector('tr.now');if(r)r.scrollIntoView({behavior:'smooth',block:'center'})}
+$('jump').onclick=jump;
+function theme(t){document.documentElement.dataset.theme=t;$('theme').textContent=t==='dark'?'☀️':'🌙';try{localStorage.setItem('todoke-theme',t)}catch(e){}}
+let th=null;try{th=localStorage.getItem('todoke-theme')}catch(e){}
+if(!th)th=matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light';
+theme(th);$('theme').onclick=()=>theme(document.documentElement.dataset.theme==='dark'?'light':'dark');
+
+render();setTimeout(jump,400);
+
+/* ============ private gate: one shared passcode ============ */
+// Firebase web config (console -> Project settings -> Your apps).
+// These values are NOT secret — admin/firestore.rules is what protects the data.
+const firebaseConfig={
+ apiKey:"AIzaSyBiaXkGZ37ybqfzuv3P7H3BfLwz7C1-X58",
+ authDomain:"todoke-planer.firebaseapp.com",
+ projectId:"todoke-planer",
+ storageBucket:"todoke-planer.firebasestorage.app",
+ messagingSenderId:"874297732911",
+ appId:"1:874297732911:web:1bd1d0bf08f5e17f5d7bda"
+};
+// The single account from Authentication -> Users.
+// Its PASSWORD is the shared passcode; its EMAIL is only a username, nothing is mailed to it.
+const SHARED_EMAIL='us@todoke-planner.app';
+
+const app=initializeApp(firebaseConfig),auth=getAuth(app),db=getFirestore(app);
+
+// thin shim so the rest of the app keeps using col.doc(id).set()/onSnapshot()
+function fsCol(name){
+ const c=collection(db,name);
+ return{
+  doc(id){const r=id?doc(db,name,id):doc(c);return{set:d=>setDoc(r,d),delete:()=>deleteDoc(r)}},
+  onSnapshot(ok,err){return onSnapshot(c,ok,err)}
+ };
+}
+let connected=false;
+function connect(){
+ col=fsCol('items');gcol=fsCol('goals');ncol=fsCol('notes');
+ ncol.onSnapshot(sn=>{notes=sn.docs.map(d=>({id:d.id,...d.data()}));renderNotes()},()=>{});
+ gcol.onSnapshot(sn=>{goals={};sn.docs.forEach(d=>goals[d.id]=d.data());renderGoal()},()=>{});
+ col.onSnapshot(s=>{items=s.docs.map(d=>({id:d.id,...d.data()}));render()},()=>note('Lost connection to the shared planner.'));
+}
+function lock(){$('pass').value='';$('gateerr').textContent='';document.body.classList.add('locked')}
+function unlock(){document.body.classList.remove('locked');setTimeout(jump,400)}
+// Speaks up when the problem is setup rather than a typo'd passcode.
+const AUTH_MSG={
+ 'auth/invalid-credential':'That passcode is not right — try again.',
+ 'auth/wrong-password':'That passcode is not right — try again.',
+ 'auth/user-not-found':'No account matches SHARED_EMAIL — check who you added in Authentication.',
+ 'auth/invalid-email':'SHARED_EMAIL is not a valid email address.',
+ 'auth/operation-not-allowed':'Email/Password sign-in is not enabled in the Firebase console.',
+ 'auth/invalid-api-key':'The API key in firebaseConfig is wrong.',
+ 'auth/api-key-not-valid':'The API key in firebaseConfig is wrong.',
+ 'auth/network-request-failed':'No connection — check your internet and try again.',
+ 'auth/too-many-requests':'Too many attempts — wait a minute, then try again.'
+};
+async function tryUnlock(){
+ const p=$('pass').value;if(!p)return;
+ const b=$('passgo');b.disabled=true;$('gateerr').textContent='Checking…';
+ try{await signInWithEmailAndPassword(auth,SHARED_EMAIL,p);$('gateerr').textContent=''}
+ catch(e){
+  $('gateerr').textContent=AUTH_MSG[e.code]||('Sign-in failed ('+(e.code||'unknown error')+').');
+  if(e.code!=='auth/network-request-failed'&&e.code!=='auth/too-many-requests')$('pass').select();
+ }
+ finally{b.disabled=false}
+}
+$('passgo').onclick=tryUnlock;
+$('pass').onkeydown=e=>{if(e.key==='Enter')tryUnlock()};
+$('out').onclick=()=>signOut(auth);
+onAuthStateChanged(auth,user=>{
+ if(user){if(!connected){connected=true;connect()}unlock()}
+ else{connected=false;items=[];goals={};notes=[];col=gcol=ncol=null;render();renderNotes();renderGoal();lock()}
+});
+</script>
+</body>
+</html>
